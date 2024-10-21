@@ -9,4 +9,4 @@ def connect_redis():
 
 def disconnect_redis():
     global connection 
-    connection = None  # In Redis, simply losing the reference is enough to disconnect.
+    connection = None 
