@@ -1,10 +1,12 @@
 import uvicorn
 from fastapi import FastAPI, WebSocket
+from api.routers import data_router  # Adjust import path as needed
 from fastapi.middleware.cors import CORSMiddleware
 from services.db_service import connect_db, disconnect_db
 from services.redis_service import connect_redis, disconnect_redis
 
 app = FastAPI()
+app.include_router(data_router.router)
 
 # CORS for frontend
 app.add_middleware(
