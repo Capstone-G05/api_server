@@ -3,7 +3,7 @@ from fastapi import FastAPI, WebSocket
 from api.routers import data_router  # Adjust import path as needed
 from fastapi.middleware.cors import CORSMiddleware
 from services.db_service import connect_db, disconnect_db
-from services.redis_service import connect_redis, disconnect_redis
+from services.redis_service import connect_redis, disconnect_redis, load_data_to_redis
 
 app = FastAPI()
 app.include_router(data_router.router)
@@ -21,6 +21,7 @@ app.add_middleware(
 async def startup_event():
     connect_db("dbname.db")  
     connect_redis()
+    load_data_to_redis()  #populate redis from sqlite
 
 @app.on_event("shutdown")
 async def shutdown_event():
