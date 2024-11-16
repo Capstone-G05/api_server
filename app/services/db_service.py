@@ -48,7 +48,8 @@ def initialize_database():
         ('auger_fold_speed_ref', '30'),
         ('spout_tilt_speed_ref', '30'),
         ('spout_rotation_speed_ref', '30'),
-        ('gate_speed_ref', '30')
+        ('gate_speed_ref', '30'),
+        ('simulation_power', 'true')
     ]
     cursor.executemany(
         "INSERT OR IGNORE INTO redis_keys (key, value) VALUES (?, ?)", data

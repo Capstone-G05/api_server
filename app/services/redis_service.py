@@ -116,3 +116,12 @@ def get_gate_speed():
     value = rd_connection.get("gate_speed_ref")
     return float(value) if value is not None else default
 
+#power
+def get_simulation_power():
+    value = rd_connection.get("simulation_power")
+    if value is None:
+        return default  
+    if value == 'true':
+        return True
+    elif value == 'false':
+        return False

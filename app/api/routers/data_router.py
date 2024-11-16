@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.redis_service import get_auger_pivot_angle, get_auger_pivot_angle_max, get_auger_pivot_angle_min, get_auger_fold_angle, get_auger_fold_angle_max, get_auger_fold_angle_min, get_spout_tilt_angle, get_spout_tilt_angle_max, get_spout_tilt_angle_min, get_gate_angle, get_gate_angle_max, get_gate_angle_min, get_spout_rotation_angle, get_spout_rotation_angle_max, get_spout_rotation_angle_min, get_auger_fold_speed, get_auger_pivot_speed, get_spout_rotation_speed, get_spout_tilt_speed, get_gate_speed
+from services.redis_service import get_auger_pivot_angle, get_auger_pivot_angle_max, get_auger_pivot_angle_min, get_auger_fold_angle, get_auger_fold_angle_max, get_auger_fold_angle_min, get_spout_tilt_angle, get_spout_tilt_angle_max, get_spout_tilt_angle_min, get_gate_angle, get_gate_angle_max, get_gate_angle_min, get_spout_rotation_angle, get_spout_rotation_angle_max, get_spout_rotation_angle_min, get_auger_fold_speed, get_auger_pivot_speed, get_spout_rotation_speed, get_spout_tilt_speed, get_gate_speed, get_simulation_power
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -134,9 +134,14 @@ async def gate_speed():
     return {"gate_speed_ref": speed}
 
 
-# set and get user inputs
+#simulation power
+@router.get("/simulation-power")
+async def power():
+    power = get_simulation_power()
+    return {"simulation_power": power}
 
 
+#user inputs
 @router.post("/set-machine-type")
 async def set_machine_type(request: MachineTypeRequest):
     ui_parameters["machine_type"] = request.value
