@@ -104,12 +104,12 @@ def get_auger_fold_speed():
     value = rd_connection.get("auger_fold_speed_ref")
     return float(value) if value is not None else default
 
-def get_auger_tilt_speed():
-    value = rd_connection.get("auger_tilt_speed_ref")
+def get_spout_tilt_speed():
+    value = rd_connection.get("spout_tilt_speed_ref")
     return float(value) if value is not None else default
 
-def get_auger_rotation_speed():
-    value = rd_connection.get("auger_rotation_speed_ref")
+def get_spout_rotation_speed():
+    value = rd_connection.get("spout_rotation_speed_ref")
     return float(value) if value is not None else default
 
 def get_gate_speed():

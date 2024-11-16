@@ -46,8 +46,8 @@ def initialize_database():
         ('gate_angle_min', '0'),
         ('auger_pivot_speed_ref', '30'),
         ('auger_fold_speed_ref', '30'),
-        ('auger_tilt_speed_ref', '30'),
-        ('auger_rotation_speed_ref', '30'),
+        ('spout_tilt_speed_ref', '30'),
+        ('spout_rotation_speed_ref', '30'),
         ('gate_speed_ref', '30')
     ]
     cursor.executemany(
