@@ -1,4 +1,6 @@
 # app/redis_service.py
+import os
+
 import redis
 rd_connection = None
 
@@ -7,7 +9,7 @@ default = 00 # Default if key does not exist
 # move password to env file later?
 def connect_redis():
     global rd_connection 
-    rd_connection = redis.StrictRedis(host="172.23.24.2",  port=6379, password="graincart", decode_responses=True )
+    rd_connection = redis.StrictRedis(host=os.getenv("REDIS_HOST"),  port=os.getenv("REDIS_PORT"), decode_responses=True )
 
 def disconnect_redis():
     global rd_connection 

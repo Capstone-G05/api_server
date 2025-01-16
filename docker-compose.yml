@@ -1,0 +1,19 @@
+services:
+  data:
+    image: redis
+    network_mode: host
+    restart: always
+
+  api_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - data
+    network_mode: host
+    restart: always
+    environment:
+      REDIS_HOST: "localhost"
+      REDIS_PORT: 6379
+    volumes:
+      - "./app:/app"
