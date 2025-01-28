@@ -8,10 +8,19 @@ from services.redis_service import connect_redis, disconnect_redis, load_data_to
 app = FastAPI()
 app.include_router(data_router.router)
 
+origins = [
+    "http://localhost",        # For same machine
+    "http://127.0.0.1",        # For same machine
+    "http://192.168.100.135:8080",    # frontend machine
+    "http://192.168.100.161:3000",
+    "http://10.5.0.2:8080",
+    "http://localhost:5173" # simulation frontend 
+]
+
 # CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with frontend URL
+    allow_origins=origins,  # Replace with frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,5 +51,5 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 if __name__ == "__main__":
-   uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+   uvicorn.run("main:app", host="127.0.0.1", port=8020, reload=True)
 

@@ -31,15 +31,16 @@ def load_data_to_redis():
 
 #auger
 def get_auger_pivot_angle():
-    value = rd_connection.get("auger_pivot_angle")
+    value = rd_connection.get("auger_bottom_pivot_angle")
+    print(value)
     return float(value) if value is not None else default
     
 def get_auger_pivot_angle_max():
-    value = rd_connection.get("auger_pivot_angle_max")
+    value = rd_connection.get("auger_bottom_pivot_angle_max")
     return float(value) if value is not None else default
 
 def get_auger_pivot_angle_min():
-    value = rd_connection.get("auger_pivot_angle_min")
+    value = rd_connection.get("auger_bottom_pivot_angle_min")
     return float(value) if value is not None else default
 
 def get_auger_fold_angle():

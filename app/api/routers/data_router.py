@@ -5,6 +5,7 @@ from pydantic import BaseModel
 router = APIRouter()
 
 ui_parameters = {}
+frontend_parameters ={}
 
 class MachineTypeRequest(BaseModel):
     value: str
@@ -17,22 +18,59 @@ class PTOTypeRequest(BaseModel):
 
 
 #auger
-@router.get("/auger-pivot-angle")
+@router.get("/auger-bottom-pivot-angle")
 async def auger_pivot_angle():
     angle = get_auger_pivot_angle()
-    return {"auger_pivot_angle": angle}
+    return {"auger_bottom_pivot_angle": angle}
 
 
-@router.get("/auger-pivot-angle-max")
+@router.post("/set-auger-bottom-pivot-angle")
+async def set_auger_pivot_angle(request: FloatTypeRequest):
+    frontend_parameters["auger_bottom_pivot_angle"] = request.value
+    return {"auger_bottom_pivot_angle": request.value}
+
+
+@router.post("/set-auger-top-angle")
+async def set_auger_top_angle(request: FloatTypeRequest):
+    frontend_parameters["auger_top_angle"] = request.value
+    return {"auger_top_angle": request.value}
+
+
+@router.post("/set-spout-tilt-angle")
+async def set_spout_tilt_angle(request: FloatTypeRequest):
+    frontend_parameters["spout_tilt_angle"] = request.value
+    return {"spout_tilt_angle": request.value}
+
+
+
+@router.post("/set-head-rotation-angle")
+async def set_head_rotation_angle(request: FloatTypeRequest):
+    frontend_parameters["head_rotation_angle"] = request.value
+    return {"head_rotation_angle": request.value}
+
+
+@router.post("/set-gate-angle")
+async def set_head_rotation_angle(request: FloatTypeRequest):
+    frontend_parameters["gate_angle"] = request.value
+    return {"gate_angle": request.value}
+
+
+@router.post("/set-auger-bottom-pivot-angle")
+async def set_auger_pivot_angle(request: FloatTypeRequest):
+    frontend_parameters["auger_bottom_pivot_angle"] = request.value
+    return {"auger_bottom_pivot_angle": request.value}
+
+
+@router.get("/auger-bottom-pivot-angle-max")
 async def auger_pivot_angle_max():
     max_angle = get_auger_pivot_angle_max()
-    return {"auger_pivot_angle_max": max_angle}
+    return {"auger_bottom_pivot_angle_max": max_angle}
 
 
-@router.get("/auger-pivot-angle-min")
+@router.get("/auger-bottom-pivot-angle-min")
 async def auger_pivot_angle_min():
     min_angle = get_auger_pivot_angle_min()
-    return {"auger_pivot_angle_min": min_angle}
+    return {"auger_bottom_pivot_angle_min": min_angle}
 
 
 @router.get("/auger-fold-angle")
@@ -198,4 +236,5 @@ async def get_crop_fill_rate():
     if "pto" not in ui_parameters:
         raise HTTPException(status_code=404, detail="pto not set")
     return {"pto": ui_parameters["pto"]}
+
 
