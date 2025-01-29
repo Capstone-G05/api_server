@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This repository consists of all data integration for the grain cart capstone project. 
 
 To run the API Server: 
@@ -5,3 +6,6 @@ To run the API Server:
 Run main.py file in app directory.
 
 Author: Sanjana RoyChowdhury 
+=======
+This repository consists of all data integration for the grain cart capstone project
+>>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0

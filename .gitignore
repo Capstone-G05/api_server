@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .venv
 venv
 env
@@ -9,4 +10,16 @@ __pycache__/
 *.pyd
 *.db
 *.sqlite3
+=======
+.venv
+venv
+env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+>>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 *.log

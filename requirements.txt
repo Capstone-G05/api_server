@@ -1,4 +1,8 @@
 fastapi
 uvicorn 
+<<<<<<< HEAD
 redis
 pydantic
+=======
+redis
+>>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
