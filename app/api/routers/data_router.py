@@ -1,18 +1,11 @@
 from fastapi import APIRouter, HTTPException
-<<<<<<< HEAD
 from services.redis_service import set_in_redis, get_auger_pivot_angle, get_auger_pivot_angle_max, get_auger_pivot_angle_min, get_auger_top_angle, get_auger_top_angle_max, get_auger_top_angle_min, get_spout_tilt_angle, get_spout_tilt_angle_max, get_spout_tilt_angle_min, get_gate_angle, get_gate_angle_max, get_gate_angle_min, get_head_rotation_angle, get_head_rotation_angle_max, get_head_rotation_angle_min, get_auger_top_speed, get_auger_bottom_pivot_speed, get_head_rotation_speed, get_spout_tilt_speed, get_gate_speed, get_simulation_power, get_auger_pivot_up, get_auger_pivot_down, get_auger_fold, get_auger_unfold, get_spout_tilt_up, get_spout_tilt_down, get_head_rotation_cw, get_head_rotation_ccw, get_gate_open, get_gate_close
-=======
-from services.redis_service import get_auger_pivot_angle, get_auger_pivot_angle_max, get_auger_pivot_angle_min, get_auger_fold_angle, get_auger_fold_angle_max, get_auger_fold_angle_min, get_spout_tilt_angle, get_spout_tilt_angle_max, get_spout_tilt_angle_min, get_gate_angle, get_gate_angle_max, get_gate_angle_min, get_spout_rotation_angle, get_spout_rotation_angle_max, get_spout_rotation_angle_min, get_auger_fold_speed, get_auger_pivot_speed, get_spout_rotation_speed, get_spout_tilt_speed, get_gate_speed, get_simulation_power
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 from pydantic import BaseModel
 
 router = APIRouter()
 
 ui_parameters = {}
-<<<<<<< HEAD
 frontend_parameters ={}
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 
 class MachineTypeRequest(BaseModel):
     value: str
@@ -25,7 +18,6 @@ class PTOTypeRequest(BaseModel):
 
 
 #auger
-<<<<<<< HEAD
 @router.get("/auger-bottom-pivot-angle")
 async def auger_pivot_angle():
     angle = get_auger_pivot_angle()
@@ -96,42 +88,6 @@ async def auger_top_angle_max():
 async def auger_top_angle_min():
     min_angle = get_auger_top_angle_min()
     return {"auger_top_angle_min": min_angle}
-=======
-@router.get("/auger-pivot-angle")
-async def auger_pivot_angle():
-    angle = get_auger_pivot_angle()
-    return {"auger_pivot_angle": angle}
-
-
-@router.get("/auger-pivot-angle-max")
-async def auger_pivot_angle_max():
-    max_angle = get_auger_pivot_angle_max()
-    return {"auger_pivot_angle_max": max_angle}
-
-
-@router.get("/auger-pivot-angle-min")
-async def auger_pivot_angle_min():
-    min_angle = get_auger_pivot_angle_min()
-    return {"auger_pivot_angle_min": min_angle}
-
-
-@router.get("/auger-fold-angle")
-async def auger_fold_angle():
-    angle = get_auger_fold_angle()
-    return {"auger_fold_angle": angle}
-
-
-@router.get("/auger-fold-angle-max")
-async def auger_fold_angle_max():
-    max_angle = get_auger_fold_angle_max()
-    return {"auger_fold_angle_max": max_angle}
-
-
-@router.get("/auger-fold-angle-min")
-async def auger_fold_angle_min():
-    min_angle = get_auger_fold_angle_min()
-    return {"auger_fold_angle_min": min_angle}
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 
 
 #spout
@@ -153,7 +109,6 @@ async def spout_tilt_angle_min():
     return {"spout_tilt_angle_min": min_angle}
 
 
-<<<<<<< HEAD
 #head
 @router.get("/head-rotation-angle")
 async def head_rotation_angle():
@@ -171,24 +126,6 @@ async def head_rotation_angle_max():
 async def head_rotation_angle_min():
     min_angle = get_head_rotation_angle_min()
     return {"head_rotation_angle_min": min_angle}
-=======
-@router.get("/spout-rotation-angle")
-async def spout_rotation_angle():
-    angle = get_spout_rotation_angle()
-    return {"spout_rotation_angle": angle}
-
-
-@router.get("/spout-rotation-angle-max")
-async def spout_rotation_angle_max():
-    max_angle = get_spout_rotation_angle_max()
-    return {"spout_rotation_angle_max": max_angle}
-
-
-@router.get("/spout-rotation-angle-min")
-async def spout_rotation_angle_min():
-    min_angle = get_spout_rotation_angle_min()
-    return {"spout_rotation_angle_min": min_angle}
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 
 #gate
 @router.get("/gate-angle")
@@ -209,7 +146,6 @@ async def gate_angle_min():
     return {"gate_angle_min": min_angle}
 
 #speed reference
-<<<<<<< HEAD
 @router.get("/auger-bottom-pivot-speed-ref")
 async def auger_pivot_speed():
     speed = get_auger_bottom_pivot_speed()
@@ -219,34 +155,16 @@ async def auger_pivot_speed():
 async def auger_top_speed():
     speed = get_auger_top_speed()
     return {"auger_top_speed_ref": speed}
-=======
-@router.get("/auger-pivot-speed-ref")
-async def auger_pivot_speed():
-    speed = get_auger_pivot_speed()
-    return {"auger_pivot_speed_ref": speed}
-
-@router.get("/auger-fold-speed-ref")
-async def auger_fold_speed():
-    speed = get_auger_fold_speed()
-    return {"auger_fold_speed_ref": speed}
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 
 @router.get("/spout-tilt-speed-ref")
 async def spout_tilt_speed():
     speed = get_spout_tilt_speed()
     return {"spout_tilt_speed_ref": speed}
 
-<<<<<<< HEAD
 @router.get("/head-rotation-speed-ref")
 async def head_rotation_speed():
     speed = get_head_rotation_speed()
     return {"head_rotation_speed_ref": speed}
-=======
-@router.get("/spout-rotation-speed-ref")
-async def spout_rotation_speed():
-    speed = get_spout_rotation_speed()
-    return {"spout_rotation_speed_ref": speed}
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
 
 @router.get("/gate-speed-ref")
 async def gate_speed():
@@ -265,10 +183,7 @@ async def power():
 @router.post("/set-machine-type")
 async def set_machine_type(request: MachineTypeRequest):
     ui_parameters["machine_type"] = request.value
-<<<<<<< HEAD
     set_in_redis("machine_type",str(request.value))
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
     return {"machine_type": request.value}
 
 @router.get("/machine-type")
@@ -281,10 +196,7 @@ async def get_machine_type():
 @router.post("/set-crop-fill-rate")
 async def set_crop_fill_rate(request: FloatTypeRequest):
     ui_parameters["crop_fill_rate"] = request.value
-<<<<<<< HEAD
     set_in_redis("crop_fill_rate",str(request.value))
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
     return {"crop_fill_rate": request.value}
 
 @router.get("/crop-fill-rate")
@@ -296,10 +208,7 @@ async def get_crop_fill_rate():
 @router.post("/set-front-weight")
 async def set_crop_fill_rate(request: FloatTypeRequest):
     ui_parameters["front_weight"] = request.value
-<<<<<<< HEAD
     set_in_redis("front_weight",str(request.value))
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
     return {"front_weight": request.value}
 
 @router.get("/front-weight")
@@ -311,10 +220,7 @@ async def get_crop_fill_rate():
 @router.post("/set-rear-weight")
 async def set_crop_fill_rate(request: FloatTypeRequest):
     ui_parameters["rear_weight"] = request.value
-<<<<<<< HEAD
     set_in_redis("rear_weight",str(request.value))
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
     return {"rear_weight": request.value}
 
 @router.get("/rear-weight")
@@ -327,10 +233,7 @@ async def get_crop_fill_rate():
 @router.post("/set-pto")
 async def set_crop_fill_rate(request: PTOTypeRequest):
     ui_parameters["pto"] = request.value
-<<<<<<< HEAD
     set_in_redis("pto",str(request.value))
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
     return {"pto": request.value}
 
 @router.get("/pto")
@@ -339,7 +242,6 @@ async def get_crop_fill_rate():
         raise HTTPException(status_code=404, detail="pto not set")
     return {"pto": ui_parameters["pto"]}
 
-<<<<<<< HEAD
 #pwm
 @router.get("/auger-bottom-pivot-up-pwm")
 async def auger_pivot_up():
@@ -407,5 +309,3 @@ async def gate_close():
 
 
 
-=======
->>>>>>> 86732a364e0ca8d66b28fc00b1af1eb51d6fbcf0
