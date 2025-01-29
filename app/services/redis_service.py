@@ -7,7 +7,7 @@ default = 00 # Default if key does not exist
 # move password to env file later?
 def connect_redis():
     global rd_connection 
-    rd_connection = redis.StrictRedis(host="172.23.24.2",  port=6379, password="graincart", decode_responses=True )
+    rd_connection = redis.StrictRedis(host="127.0.0.1",  port=6379, password="graincart", decode_responses=True )
 
 def disconnect_redis():
     global rd_connection 
@@ -29,10 +29,14 @@ def load_data_to_redis():
         rd_connection.set(key, value)
         print(f"Loaded {key} = {value} into Redis")
 
+#set frontend parameters in redis
+def set_in_redis(key,value):
+    rd_connection.set(key,value)
+
+
 #auger
 def get_auger_pivot_angle():
     value = rd_connection.get("auger_bottom_pivot_angle")
-    print(value)
     return float(value) if value is not None else default
     
 def get_auger_pivot_angle_max():
@@ -43,16 +47,16 @@ def get_auger_pivot_angle_min():
     value = rd_connection.get("auger_bottom_pivot_angle_min")
     return float(value) if value is not None else default
 
-def get_auger_fold_angle():
-    value = rd_connection.get("auger_fold_angle")
+def get_auger_top_angle():
+    value = rd_connection.get("auger_top_angle")
     return float(value) if value is not None else default
     
-def get_auger_fold_angle_max():
-    value = rd_connection.get("auger_fold_angle_max")
+def get_auger_top_angle_max():
+    value = rd_connection.get("auger_top_angle_max")
     return float(value) if value is not None else default
 
-def get_auger_fold_angle_min():
-    value = rd_connection.get("auger_fold_angle_min")
+def get_auger_top_angle_min():
+    value = rd_connection.get("auger_top_angle_min")
     return float(value) if value is not None else default
 
 
@@ -70,16 +74,17 @@ def get_spout_tilt_angle_min():
     value = rd_connection.get("spout_tilt_angle_min")
     return float(value) if value is not None else default
 
-def get_spout_rotation_angle():
-    value = rd_connection.get("spout_rotation_angle")
+#head 
+def get_head_rotation_angle():
+    value = rd_connection.get("head_rotation_angle")
     return float(value) if value is not None else default
     
-def get_spout_rotation_angle_max():
-    value = rd_connection.get("spout_rotation_angle_max")
+def get_head_rotation_angle_max():
+    value = rd_connection.get("head_rotation_angle_max")
     return float(value) if value is not None else default
 
-def get_spout_rotation_angle_min():
-    value = rd_connection.get("spout_rotation_angle_min")
+def get_head_rotation_angle_min():
+    value = rd_connection.get("head_rotation_angle_min")
     return float(value) if value is not None else default
 
 #gate
@@ -97,20 +102,20 @@ def get_gate_angle_min():
     
     
 #reference speeds
-def get_auger_pivot_speed():
-    value = rd_connection.get("auger_pivot_speed_ref")
+def get_auger_bottom_pivot_speed():
+    value = rd_connection.get("auger_bottom_pivot_speed_ref")
     return float(value) if value is not None else default
 
-def get_auger_fold_speed():
-    value = rd_connection.get("auger_fold_speed_ref")
+def get_auger_top_speed():
+    value = rd_connection.get("auger_top_speed_ref")
     return float(value) if value is not None else default
 
 def get_spout_tilt_speed():
     value = rd_connection.get("spout_tilt_speed_ref")
     return float(value) if value is not None else default
 
-def get_spout_rotation_speed():
-    value = rd_connection.get("spout_rotation_speed_ref")
+def get_head_rotation_speed():
+    value = rd_connection.get("head_rotation_speed_ref")
     return float(value) if value is not None else default
 
 def get_gate_speed():
@@ -120,9 +125,60 @@ def get_gate_speed():
 #power
 def get_simulation_power():
     value = rd_connection.get("simulation_power")
-    if value is None:
-        return default  
-    if value == 'true':
+    if value == 'true' or value == 'True':
         return True
-    elif value == 'false':
+    else:
         return False
+    
+#pwm 
+def get_auger_pivot_up():
+    value = rd_connection.get("auger_bottom_pivot_up_pwm")
+    return float(value) if value is not None else default
+
+
+def get_auger_pivot_down():
+    value = rd_connection.get("auger_bottom_pivot_down_pwm")
+    return float(value) if value is not None else default
+
+
+def get_auger_fold():
+    value = rd_connection.get("auger_top_fold_pwm")
+    return float(value) if value is not None else default
+
+
+def get_auger_unfold():
+    value = rd_connection.get("auger_top_unfold_pwm")
+    return float(value) if value is not None else default
+
+
+def get_spout_tilt_up():
+    value = rd_connection.get("spout_tilt_up_pwm")
+    return float(value) if value is not None else default
+
+
+def get_spout_tilt_down():
+    value = rd_connection.get("spout_tilt_down_pwm")
+    return float(value) if value is not None else default
+
+def get_head_rotation_cw():
+    value = rd_connection.get("head_rotation_cw_pwm")
+    return float(value) if value is not None else default
+
+
+def get_head_rotation_ccw():
+    value = rd_connection.get("head_rotation_ccw_pwm")
+    return float(value) if value is not None else default
+
+
+def get_gate_open():
+    value = rd_connection.get("gate_open_pwm")
+    return float(value) if value is not None else default
+
+
+def get_gate_close():
+    value = rd_connection.get("gate_close_pwm")
+    return float(value) if value is not None else default
+
+
+
+

@@ -28,40 +28,61 @@ def initialize_database():
     )
     """)
 
+    cursor.execute("""DELETE FROM redis_keys""")
+
     data = [
-        ('auger_bottom_pivot_angle', '0'),
-        ('auger_bottom_pivot_up_pwm', '0'),
-        ('auger_bottom_pivot_down_pwm', '0'),
         ('auger_bottom_pivot_angle_max', '90'),
         ('auger_bottom_pivot_angle_min', '0'),
-        ('auger_top_angle', '0'),
         ('auger_top_angle_min', '0'),
         ('auger_top_angle_max', '90'),
-        ('auger_top_fold_pwm', '0'),
-        ('auger_top_unfold_pwm', '0'),
-        ('spout_tilt_angle', '0'),
         ('spout_tilt_angle_min', '0'),
         ('spout_tilt_angle_max', '90'),
-        ('spot_tilt_up_pwm', '0'),
-        ('spout_tilt_down_pwm', '0'),
-        ('head_rotation_angle', '45'),
         ('head_rotation_angle_max', '180'),
-        ('head_rotation_cw_pwm', '0'),
-        ('head_rotation_ccw_pwm', '0'),
         ('head_rotation_angle_min', '90'),
-        ('gate_angle', '0'),
         ('gate_angle_max', '90'),
         ('gate_angle_min', '0'),
-        ('gate_open_pwm', '0'),
-        ('gate_close_pwm', '0'),
         ('auger_bottom_pivot_speed_ref', '30'),
         ('auger_top_speed_ref', '30'),
         ('spout_tilt_speed_ref', '30'),
         ('head_rotation_speed_ref', '30'),
-        ('gate_speed_ref', '30'),
-        ('simulation_power', 'true')
-
+        ('gate_speed_ref', '30')
     ]
+
+    # data = [
+    #     ('auger_bottom_pivot_angle', '0'),
+    #     ('auger_bottom_pivot_up_pwm', '0'),
+    #     ('auger_bottom_pivot_down_pwm', '0'),
+    #     ('auger_top_angle', '0'),
+    #     ('auger_top_fold_pwm', '0'),
+    #     ('auger_top_unfold_pwm', '0'),
+    #     ('spout_tilt_angle', '0'),
+    #     ('spot_tilt_up_pwm', '0'),
+    #     ('spout_tilt_down_pwm', '0'),
+    #     ('head_rotation_angle', '45'),
+    #     ('head_rotation_cw_pwm', '0'),
+    #     ('head_rotation_ccw_pwm', '0'),
+    #     ('gate_angle', '0'),
+    #     ('gate_open_pwm', '0'),
+    #     ('gate_close_pwm', '0'),
+    #     ('simulation_power', 'false')
+        
+    #     ('auger_bottom_pivot_angle_max', '90'),
+    #     ('auger_bottom_pivot_angle_min', '0'),
+    #     ('auger_top_angle_min', '0'),
+    #     ('auger_top_angle_max', '90'),
+    #     ('spout_tilt_angle_min', '0'),
+    #     ('spout_tilt_angle_max', '90'),
+    #     ('head_rotation_angle_max', '180'),
+    #     ('head_rotation_angle_min', '90'),
+    #     ('gate_angle_max', '90'),
+    #     ('gate_angle_min', '0'),
+    #     ('auger_bottom_pivot_speed_ref', '30'),
+    #     ('auger_top_speed_ref', '30'),
+    #     ('spout_tilt_speed_ref', '30'),
+    #     ('head_rotation_speed_ref', '30'),
+    #     ('gate_speed_ref', '30'),
+
+    # ]
     cursor.executemany(
         "INSERT OR IGNORE INTO redis_keys (key, value) VALUES (?, ?)", data
     )
