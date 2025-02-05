@@ -1,12 +1,13 @@
-# app/db_service.py
 import sqlite3
 
 db_connection = None
+
 
 def connect_db(db_name: str):
     global db_connection
     db_connection = sqlite3.connect(db_name)
     initialize_database()
+
 
 def disconnect_db():
     global db_connection
@@ -14,9 +15,9 @@ def disconnect_db():
         db_connection.close()
         db_connection = None
 
-#mock data 
-def initialize_database():
 
+# mock data
+def initialize_database():
     global db_connection
     cursor = db_connection.cursor()
 
@@ -65,7 +66,7 @@ def initialize_database():
     #     ('gate_open_pwm', '0'),
     #     ('gate_close_pwm', '0'),
     #     ('simulation_power', 'false')
-        
+
     #     ('auger_bottom_pivot_angle_max', '90'),
     #     ('auger_bottom_pivot_angle_min', '0'),
     #     ('auger_top_angle_min', '0'),
