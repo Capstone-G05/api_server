@@ -2,7 +2,7 @@
 
 > Data integration for the grain cart capstone project.
 
-**Author:** _Snajana RoyChowdhury_
+**Author:** _Sanjana RoyChowdhury_
 
 ## Prerequisites
 - Python >=3.9.12
