@@ -4,13 +4,11 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import data_router  # Adjust import path as needed
-from services.db_service import connect_db, disconnect_db
-from services.redis_service import connect_redis, disconnect_redis, load_data_to_redis
+from routers.data_router import router as data_router
 
 app = FastAPI()
 
-app.include_router(data_router.router)
+app.include_router(data_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,19 +16,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def startup_event():
-    connect_db("dbname.db")
-    connect_redis()
-    load_data_to_redis()  # populate redis from sqlite
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    disconnect_db()
-    disconnect_redis()
 
 
 @app.get("/")
