@@ -35,7 +35,7 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host=os.getenv("API_PORT", default="localhost"),
+        host=os.getenv("API_HOST", default="0.0.0.0"),
         port=int(os.getenv("API_PORT", default="8000")),
         reload=True
     )
