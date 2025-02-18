@@ -5,10 +5,10 @@ import redis
 
 class RedisService:
     DEFAULTS = {
-        type(float): 0,
-        type(int): 0,
-        type(str): "",
-        type(bool): False,
+        "float": 0,
+        "int": 0,
+        "str": "",
+        "bool": False,
     }
 
     def __init__(self):
@@ -18,9 +18,17 @@ class RedisService:
             decode_responses=True
         )
 
+    def load_data(self, database):
+        cursor = database.execute("SELECT key, value FROM redis_keys")
+        rows = cursor.fetchall()
+        print("Loading data into Redis...")
+        for key, value in rows:
+            self.set(key, value)
+            print(f"{key}: {value}")
+
     def get(self, key: str, datatype: type):
         val = self.connection.get(key)
-        return datatype(val if val is not None else self.DEFAULTS[datatype])
+        return datatype(val if val is not None else self.DEFAULTS[datatype.__name__])
 
     def set(self, key: str, val):
         self.connection.set(key, str(val))

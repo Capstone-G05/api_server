@@ -30,6 +30,9 @@ class SQLiteService:
         cursor.execute(query)
         return cursor
 
+    def close(self):
+        self.connection.close()
+
     def initialize_database(self):
         cursor = self.connection.cursor()
 

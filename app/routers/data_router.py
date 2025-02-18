@@ -18,6 +18,10 @@ class DataRouter:
     def __init__(self):
         self.datastore = RedisService()
         # note: SQLiteService cannot be shared between route threads
+        database = SQLiteService()
+        database.initialize_database()
+        self.datastore.load_data(database)
+        database.close()
 
     def get_param(self, param: str, datatype: type):
         return {param, self.datastore.get(param, datatype)}
@@ -32,17 +36,6 @@ class DataRouter:
         group[param] = value
         self.datastore.set(param, str(value))
         return {param: value}
-
-    def load_data_to_redis(self):
-        cursor = self.database.connection.cursor()
-
-        cursor.execute("SELECT key, value FROM redis_keys")
-        rows = cursor.fetchall()
-
-        # Load data into Redis
-        for key, value in rows:
-            self.datastore.set(key, value)
-            print(f"Loaded {key} = {value} into Redis")
 
     # TEST
 
@@ -62,6 +55,7 @@ class DataRouter:
         cursor = database.execute("SELECT value FROM redis_keys WHERE key = 'test'")
         sqlite_result = int(cursor.fetchone()[0]) == 1
         sqlite_end = time.time_ns()
+        database.close()
         # Return test results
         return {
             "redis": {
