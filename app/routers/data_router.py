@@ -24,18 +24,18 @@ class DataRouter:
         database.close()
 
     def get_param(self, param: str, datatype: type):
-        return {param: self.datastore.get(param, datatype)}
+        return self.datastore.get(param, datatype)
 
     @staticmethod
     def get_cached_param(group: dict, param: str):
         if param not in group:
             raise HTTPException(status_code=404, detail=f"{param} not set")
-        return {param: group[param]}
+        return group[param]
 
     def set_param(self, group: dict, param: str, value):
         group[param] = value
         self.datastore.set(param, str(value))
-        return {param: value}
+        return value
 
     # TEST
 
