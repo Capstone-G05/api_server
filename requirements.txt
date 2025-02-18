@@ -1,4 +1,6 @@
 fastapi
+fastapi-utils
 uvicorn 
 redis
 pydantic
+typing-inspect
