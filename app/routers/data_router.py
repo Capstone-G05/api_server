@@ -24,7 +24,7 @@ class DataRouter:
         database.close()
 
     def get_param(self, param: str, datatype: type):
-        return {param, self.datastore.get(param, datatype)}
+        return {param: self.datastore.get(param, datatype)}
 
     @staticmethod
     def get_cached_param(group: dict, param: str):
