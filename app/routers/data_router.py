@@ -3,7 +3,7 @@ import time
 from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
 
-from utils.models import StringTypeRequest, FloatTypeRequest, BooleanTypeRequest
+from utils.parameters import Parameter as P
 from services.redis_service import RedisService
 from services.sqlite_service import SQLiteService
 
@@ -17,35 +17,22 @@ class DataRouter:
 
     def __init__(self):
         self.datastore = RedisService()
-        # note: SQLiteService cannot be shared between route threads
         database = SQLiteService()
         database.initialize_database()
         self.datastore.load_data(database)
         database.close()
 
-    def get_param(self, param: str, datatype: type):
-        return self.datastore.get(param, datatype)
-
-    @staticmethod
-    def get_cached_param(group: dict, param: str):
-        if param not in group:
-            raise HTTPException(status_code=404, detail=f"{param} not set")
-        return group[param]
-
-    def set_param(self, group: dict, param: str, value):
-        group[param] = value
-        self.datastore.set(param, str(value))
-        return value
-
     # TEST
 
-    @router.get("/test")
+    @router.get("/test", tags=["test"])
     async def test(self):
         # Test Redis
-        self.datastore.set("test", 1)
+        print(P.TEST.name)
+
+        self.datastore.set(P.TEST.name, 0)
         redis_start = time.time_ns()
-        self.datastore.set("TEST", 1)
-        redis_result = self.datastore.get("TEST", int) == 1
+        self.datastore.set(P.TEST.name, 1)
+        redis_result = int(self.datastore.get(P.TEST.name)) == 1
         redis_end = time.time_ns()
         # Test SQLite
         database = SQLiteService()
@@ -59,215 +46,255 @@ class DataRouter:
         # Return test results
         return {
             "redis": {
-                "status": "online" if redis_result else "offline",
+                "status": "ONLINE" if redis_result else "OFFLINE",
                 "delay": (redis_end - redis_start) / 1000000,
             },
             "sqlite": {
-                "status": "online" if sqlite_result else "offline",
+                "status": "ONLINE" if sqlite_result else "OFFLINE",
                 "delay": (sqlite_end - sqlite_start) / 1000000,
             }
         }
 
-    # AUGER BOTTOM
+    # PIVOT
 
-    @router.get("/auger-bottom-pivot-angle")
-    async def auger_bottom_pivot_angle(self):
-        return self.get_param("auger_bottom_pivot_angle", float)
+    @router.get("/pivot-angle", tags=["pivot"])
+    async def get_pivot_angle(self):
+        val = self.datastore.get(P.PIVOT_ANGLE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-bottom-pivot-angle-max")
-    async def auger_bottom_pivot_angle_max(self):
-        return self.get_param("auger_bottom_pivot_angle_max", float)
+    @router.get("/pivot-angle-max", tags=["pivot"])
+    async def get_pivot_angle_max(self):
+        val = self.datastore.get(P.PIVOT_ANGLE_MAX.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-bottom-pivot-angle-min")
-    async def auger_bottom_pivot_angle_min(self):
-        return self.get_param("auger_bottom_pivot_angle_min", float)
+    @router.get("/pivot-angle-min", tags=["pivot"])
+    async def get_pivot_angle_min(self):
+        val = self.datastore.get(P.PIVOT_ANGLE_MIN.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-auger-bottom-pivot-angle")
-    async def set_auger_bottom_pivot_angle(self, request: FloatTypeRequest):
-        return self.set_param(self.frontend_parameters, "auger_bottom_pivot_angle", request.value)
+    @router.post("/pivot-angle", tags=["pivot"])
+    async def set_pivot_angle(self, value):
+        self.datastore.set(P.PIVOT_ANGLE.name, value)
+        return value
 
-    # AUGER TOP ANGLE
+    @router.get("/pivot-speed-reference", tags=["pivot"])
+    async def get_pivot_speed_reference(self):
+        val = self.datastore.get(P.PIVOT_SPEED_REFERENCE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-top-angle")
-    async def auger_top_angle(self):
-        return self.get_param("auger_top_angle", float)
+    @router.get("/pivot-up-pwm", tags=["pivot"])
+    async def get_pivot_up_pwm(self):
+        val = self.datastore.get(P.PIVOT_UP_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-top-angle-max")
-    async def auger_top_angle_max(self):
-        return self.get_param("auger_top_angle_max", float)
+    @router.get("/pivot-down-pwm", tags=["pivot"])
+    async def get_pivot_down_pwm(self):
+        val = self.datastore.get(P.PIVOT_DOWN_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-top-angle-min")
-    async def auger_top_angle_min(self):
-        return self.get_param("auger_top_angle_min", float)
+    # FOLD
 
-    @router.post("/set-auger-top-angle")
-    async def set_auger_top_angle(self, request: FloatTypeRequest):
-        return self.set_param(self.frontend_parameters, "auger_top_angle", request.value)
+    @router.get("/fold-angle", tags=["fold"])
+    async def get_fold_angle(self):
+        val = self.datastore.get(P.FOLD_ANGLE.name)
+        return float(val) if val is not None else None
 
-    # SPOUT TILT ANGLE
+    @router.get("/fold-angle-max", tags=["fold"])
+    async def get_fold_angle_max(self):
+        val = self.datastore.get(P.FOLD_ANGLE_MAX.name)
+        return float(val) if val is not None else None
 
-    @router.get("/spout-tilt-angle")
-    async def spout_tilt_angle(self):
-        return self.get_param("spout_tilt_angle", float)
+    @router.get("/fold-angle-min", tags=["fold"])
+    async def get_fold_angle_min(self):
+        val = self.datastore.get(P.FOLD_ANGLE_MIN.name)
+        return float(val) if val is not None else None
 
-    @router.get("/spout-tilt-angle-max")
-    async def spout_tilt_angle_max(self):
-        return self.get_param("spout_tilt_angle_max", float)
+    @router.post("/fold-angle", tags=["fold"])
+    async def set_fold_angle(self, value):
+        self.datastore.set(P.FOLD_ANGLE.name, value)
+        return value
 
-    @router.get("/spout-tilt-angle-min")
-    async def spout_tilt_angle_min(self):
-        return self.get_param("spout_tilt_angle_min", float)
+    @router.get("/fold-speed-reference", tags=["fold"])
+    async def get_fold_speed_reference(self):
+        val = self.datastore.get(P.FOLD_SPEED_REFERENCE.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-spout-tilt-angle")
-    async def set_spout_tilt_angle(self, request: FloatTypeRequest):
-        return self.set_param(self.frontend_parameters, "spout_tilt_angle", request.value)
+    @router.get("/fold-out-pwm", tags=["fold"])
+    async def get_fold_out_pwm(self):
+        val = self.datastore.get(P.FOLD_OUT_PWM.name)
+        return float(val) if val is not None else None
 
-    # SPOUT HEAD ANGLE
+    @router.get("/fold-in-pwm", tags=["fold"])
+    async def get_fold_in_pwm(self):
+        val = self.datastore.get(P.FOLD_IN_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.get("/head-rotation-angle")
-    async def head_rotation_angle(self):
-        return self.get_param("head_rotation_angle", float)
+    # TILT
 
-    @router.get("/head-rotation-angle-max")
-    async def head_rotation_angle_max(self):
-        return self.get_param("head_rotation_angle_max", float)
+    @router.get("/tilt-angle", tags=["tilt"])
+    async def get_tilt_angle(self):
+        val = self.datastore.get(P.TILT_ANGLE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/head-rotation-angle-min")
-    async def head_rotation_angle_min(self):
-        return self.get_param("head_rotation_angle_min", float)
+    @router.get("/tilt-angle-max", tags=["tilt"])
+    async def get_tilt_angle_max(self):
+        val = self.datastore.get(P.TILT_ANGLE_MAX.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-head-rotation-angle")
-    async def set_head_rotation_angle(self, request: FloatTypeRequest):
-        return self.set_param(self.frontend_parameters, "head_rotation_angle", request.value)
+    @router.get("/tilt-angle-min", tags=["tilt"])
+    async def get_tilt_angle_min(self):
+        val = self.datastore.get(P.TILT_ANGLE_MIN.name)
+        return float(val) if val is not None else None
 
-    # GATE ANGLE
+    @router.post("/tilt-angle", tags=["tilt"])
+    async def set_tilt_angle(self, value):
+        self.datastore.set(P.TILT_ANGLE.name, value)
+        return value
 
-    @router.get("/gate-angle")
-    async def gate_angle(self):
-        return self.get_param("gate_angle", float)
+    @router.get("/tilt-speed-reference", tags=["tilt"])
+    async def get_tilt_speed_reference(self):
+        val = self.datastore.get(P.TILT_SPEED_REFERENCE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/gate-angle-max")
-    async def gate_angle_max(self):
-        return self.get_param("gate_angle_max", float)
+    @router.get("/tilt-up-pwm", tags=["tilt"])
+    async def get_tilt_up_pwm(self):
+        val = self.datastore.get(P.TILT_UP_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.get("/gate-angle-min")
-    async def gate_angle_min(self):
-        return self.get_param("gate_angle_min", float)
+    @router.get("/tilt-down-pwm", tags=["tilt"])
+    async def get_tilt_down_pwm(self):
+        val = self.datastore.get(P.TILT_DOWN_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-gate-angle")
-    async def set_gate_angle(self, request: FloatTypeRequest):
-        return self.set_param(self.frontend_parameters, "gate_angle", request.value)
+    # ROTATE
 
-    # SPEED REFERENCE
+    @router.get("/rotate-angle", tags=["rotate"])
+    async def get_rotate_angle(self):
+        val = self.datastore.get(P.ROTATE_ANGLE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-bottom-pivot-speed-ref")
-    async def auger_bottom_pivot_speed_ref(self):
-        return self.get_param("auger_bottom_pivot_speed_ref", float)
+    @router.get("/rotate-angle-max", tags=["rotate"])
+    async def get_rotate_angle_max(self):
+        val = self.datastore.get(P.ROTATE_ANGLE_MAX.name)
+        return float(val) if val is not None else None
 
-    @router.get("/auger-top-speed-ref")
-    async def auger_top_speed_ref(self):
-        return self.get_param("auger_top_speed_ref", float)
+    @router.get("/rotate-angle-min", tags=["rotate"])
+    async def get_rotate_angle_min(self):
+        val = self.datastore.get(P.ROTATE_ANGLE_MIN.name)
+        return float(val) if val is not None else None
 
-    @router.get("/spout-tilt-speed-ref")
-    async def spout_tilt_speed_ref(self):
-        return self.get_param("spout_tilt_speed_ref", float)
+    @router.post("/rotate-angle", tags=["rotate"])
+    async def set_rotate_angle(self, value):
+        self.datastore.set(P.ROTATE_ANGLE.name, value)
+        return value
 
-    @router.get("/head-rotation-speed-ref")
-    async def head_rotation_speed_ref(self):
-        return self.get_param("head_rotation_speed_ref", float)
+    @router.get("/rotate-speed-reference", tags=["rotate"])
+    async def get_rotate_speed_reference(self):
+        val = self.datastore.get(P.ROTATE_SPEED_REFERENCE.name)
+        return float(val) if val is not None else None
 
-    @router.get("/gate-speed-ref")
-    async def gate_speed_ref(self):
-        return self.get_param("gate_speed_ref", float)
+    @router.get("/rotate-cw-pwm", tags=["rotate"])
+    async def get_rotate_cw_pwm(self):
+        val = self.datastore.get(P.ROTATE_CW_PWM.name)
+        return float(val) if val is not None else None
 
-    # SIMULATION POWER
+    @router.get("/rotate-ccw-pwm", tags=["rotate"])
+    async def get_rotate_ccw_pwm(self):
+        val = self.datastore.get(P.ROTATE_CCW_PWM.name)
+        return float(val) if val is not None else None
 
-    @router.get("/simulation-power")
-    async def simulation_power(self):
-        status = self.datastore.get("simulation_power", str).lower() == "true"
-        return {"simulation_power": status}
+    # GATE
 
-    # USER INPUTS
+    @router.get("/gate-angle", tags=["gate"])
+    async def get_gate_angle(self):
+        val = self.datastore.get(P.GATE_ANGLE.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-machine-type")
-    async def set_machine_type(self, request: StringTypeRequest):
-        return self.set_param(self.ui_parameters, "machine_type", request.value)
+    @router.get("/gate-angle-max", tags=["gate"])
+    async def get_gate_angle_max(self):
+        val = self.datastore.get(P.GATE_ANGLE_MAX.name)
+        return float(val) if val is not None else None
 
-    @router.get("/machine-type")
+    @router.get("/gate-angle-min", tags=["gate"])
+    async def get_gate_angle_min(self):
+        val = self.datastore.get(P.GATE_ANGLE_MIN.name)
+        return float(val) if val is not None else None
+
+    @router.post("/gate-angle", tags=["gate"])
+    async def set_gate_angle(self, value):
+        self.datastore.set(P.GATE_ANGLE.name, value)
+        return value
+
+    @router.get("/gate-speed-reference", tags=["gate"])
+    async def get_gate_speed_reference(self):
+        val = self.datastore.get(P.GATE_SPEED_REFERENCE.name)
+        return float(val) if val is not None else None
+
+    @router.get("/gate-open-pwm", tags=["gate"])
+    async def get_gate_open_pwm(self):
+        val = self.datastore.get(P.GATE_OPEN_PWM.name)
+        return float(val) if val is not None else None
+
+    @router.get("/gate-close-pwm", tags=["gate"])
+    async def get_gate_close_pwm(self):
+        val = self.datastore.get(P.GATE_CLOSE_PWM.name)
+        return float(val) if val is not None else None
+
+    # ONLINE (STATUS)
+
+    @router.get("/online")
+    async def get_online(self):
+        val = self.datastore.get(P.ONLINE.name)
+        return int(val) if val is not None else None
+
+    # USER INPUT
+
+    @router.post("/machine-type", tags=["user_input"])
+    async def set_machine_type(self, value):
+        self.datastore.set(P.MACHINE_TYPE.name, value)
+        return value
+
+    @router.get("/machine-type", tags=["user_input"])
     async def get_machine_type(self):
-        return self.get_cached_param(self.ui_parameters, "machine_type")
+        val = self.datastore.get(P.MACHINE_TYPE.name)
+        return str(val) if val is not None else None
 
-    @router.post("/set-crop-fill-rate")
-    async def set_crop_fill_rate(self, request: FloatTypeRequest):
-        return self.set_param(self.ui_parameters, "crop_fill_rate", request.value)
+    @router.post("/crop-fill-rate", tags=["user_input"])
+    async def set_crop_fill_rate(self, value):
+        self.datastore.set(P.CROP_FILL_RATE.name, value)
+        return value
 
-    @router.get("/crop-fill-rate")
+    @router.get("/crop-fill-rate", tags=["user_input"])
     async def get_crop_fill_rate(self):
-        return self.get_cached_param(self.ui_parameters, "crop_fill_rate")
+        val = self.datastore.get(P.CROP_FILL_RATE.name)
+        return float(val) if val is not None else None
 
-    @router.post("/set-front-weight")
-    async def set_front_weight(self, request: FloatTypeRequest):
-        return self.set_param(self.ui_parameters, "front_weight", request.value)
+    @router.post("/weight-front", tags=["user_input"])
+    async def set_weight_front(self, value):
+        self.datastore.set(P.WEIGHT_FRONT.name, value)
+        return value
 
-    @router.get("/front-weight")
-    async def get_front_weight(self):
-        return self.get_cached_param(self.ui_parameters, "front_weight")
+    @router.get("/weight-front", tags=["user_input"])
+    async def get_weight_front(self):
+        val = self.datastore.get(P.WEIGHT_FRONT.name)
+        return float(val) if val is not None else None
 
+    @router.post("/weight-rear", tags=["user_input"])
+    async def set_weight_rear(self, value):
+        self.datastore.set(P.WEIGHT_REAR.name, value)
+        return value
 
-    @router.post("/set-rear-weight")
-    async def set_rear_weight(self, request: FloatTypeRequest):
-        return self.set_param(self.ui_parameters, "rear_weight", request.value)
+    @router.get("/weight-rear", tags=["user_input"])
+    async def get_weight_rear(self):
+        val = self.datastore.get(P.WEIGHT_REAR.name)
+        return float(val) if val is not None else None
 
-    @router.get("/rear-weight")
-    async def get_rear_weight(self):
-        return self.get_cached_param(self.ui_parameters, "rear_weight")
+    @router.post("/pto_speed", tags=["user_input"])
+    async def set_pto_speed(self, value):
+        self.datastore.set(P.PTO_SPEED.name, value)
+        return value
 
-    @router.post("/set-pto")
-    async def set_pto(self, request: BooleanTypeRequest):
-        return self.set_param(self.ui_parameters, "pto", request.value)
-
-    @router.get("/pto")
-    async def get_pto(self):
-        return self.get_cached_param(self.ui_parameters, "pto")
-
-    # PWM
-
-    @router.get("/auger-bottom-pivot-up-pwm")
-    async def auger_bottom_pivot_up_pwm(self):
-        return self.get_param("auger_bottom_pivot_up_pwm", float)
-
-    @router.get("/auger-bottom-pivot-down-pwm")
-    async def auger_bottom_pivot_down_pwm(self):
-        return self.get_param("auger_bottom_pivot_down_pwm", float)
-
-    @router.get("/auger-top-fold-pwm")
-    async def auger_top_fold_pwm(self):
-        return self.get_param("auger_top_fold_pwm", float)
-
-    @router.get("/auger-top-unfold-pwm")
-    async def auger_top_unfold_pwm(self):
-        return self.get_param("auger_top_unfold_pwm", float)
-
-    @router.get("/spout-tilt-up-pwm")
-    async def spout_tilt_up_pwm(self):
-        return self.get_param("spout_tilt_up_pwm", float)
-
-    @router.get("/spout-tilt-down-pwm")
-    async def spout_tilt_down_pwm(self):
-        return self.get_param("spout_tilt_down_pwm", float)
-
-    @router.get("/head-rotation-cw-pwm")
-    async def head_rotation_cw_pwm(self):
-        return self.get_param("head_rotation_cw_pwm", float)
-
-    @router.get("/head-rotation-ccw-pwm")
-    async def head_rotation_ccw_pwm(self):
-        return self.get_param("head_rotation_ccw_pwm", float)
-
-    @router.get("/gate_open-pwm")
-    async def gate_open_pwm(self):
-        return self.get_param("gate_open_pwm", float)
-
-    @router.get("/gate_close-pwm")
-    async def gate_close_pwm(self):
-        return self.get_param("gate_close_pwm", float)
+    @router.get("/pto_speed", tags=["user_input"])
+    async def get_pto_speed(self):
+        val = self.datastore.get(P.PTO_SPEED.name)
+        return float(val) if val is not None else None

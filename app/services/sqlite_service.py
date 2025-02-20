@@ -2,23 +2,25 @@ import os
 import sqlite3
 
 
+from utils.parameters import Parameter as P
+
 class SQLiteService:
     DEFAULTS = [
-        ("auger_bottom_pivot_angle_max", "90"),
-        ("auger_bottom_pivot_angle_min", "0"),
-        ("auger_top_angle_min", "0"),
-        ("auger_top_angle_max", "90"),
-        ("spout_tilt_angle_min", "0"),
-        ("spout_tilt_angle_max", "90"),
-        ("head_rotation_angle_max", "180"),
-        ("head_rotation_angle_min", "90"),
-        ("gate_angle_max", "90"),
-        ("gate_angle_min", "0"),
-        ("auger_bottom_pivot_speed_ref", "30"),
-        ("auger_top_speed_ref", "30"),
-        ("spout_tilt_speed_ref", "30"),
-        ("head_rotation_speed_ref", "30"),
-        ("gate_speed_ref", "30")
+        (P.PIVOT_ANGLE_MAX.name, "90"),
+        (P.PIVOT_ANGLE_MIN.name, "0"),
+        (P.PIVOT_SPEED_REFERENCE.name, "30"),
+        (P.FOLD_ANGLE_MAX.name, "90"),
+        (P.FOLD_ANGLE_MIN.name, "0"),
+        (P.FOLD_SPEED_REFERENCE.name, "30"),
+        (P.TILT_ANGLE_MAX.name, "90"),
+        (P.TILT_ANGLE_MIN.name, "0"),
+        (P.TILT_SPEED_REFERENCE.name, "30"),
+        (P.ROTATE_ANGLE_MAX.name, "180"),
+        (P.ROTATE_ANGLE_MIN.name, "90"),
+        (P.ROTATE_SPEED_REFERENCE.name, "30"),
+        (P.GATE_ANGLE_MIN.name, "90"),
+        (P.GATE_ANGLE_MIN.name, "0"),
+        (P.GATE_SPEED_REFERENCE.name, "30"),
     ]
 
     def __init__(self):

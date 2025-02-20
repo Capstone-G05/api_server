@@ -2,6 +2,8 @@ import os
 
 import redis
 
+from utils.parameters import Parameter
+
 
 class RedisService:
     DEFAULTS = {
@@ -26,9 +28,8 @@ class RedisService:
             self.set(key, value)
             print(f"{key}: {value}")
 
-    def get(self, key: str, datatype: type):
-        val = self.connection.get(key)
-        return datatype(val if val is not None else self.DEFAULTS[datatype.__name__])
+    def get(self, key: str):
+        return self.connection.get(key)
 
     def set(self, key: str, val):
         self.connection.set(key, str(val))
