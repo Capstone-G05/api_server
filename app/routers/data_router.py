@@ -289,12 +289,12 @@ class DataRouter:
         val = self.datastore.get(P.WEIGHT_REAR.name)
         return float(val) if val is not None else None
 
-    @router.post("/pto_speed", tags=["user_input"])
+    @router.post("/pto-speed", tags=["user_input"])
     async def set_pto_speed(self, value):
         self.datastore.set(P.PTO_SPEED.name, value)
         return value
 
-    @router.get("/pto_speed", tags=["user_input"])
+    @router.get("/pto-speed", tags=["user_input"])
     async def get_pto_speed(self):
         val = self.datastore.get(P.PTO_SPEED.name)
         return float(val) if val is not None else None
