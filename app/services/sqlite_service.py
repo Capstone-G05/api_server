@@ -6,27 +6,27 @@ from utils.parameters import Parameter as P
 
 class SQLiteService:
     DEFAULTS = [
-        (P.PIVOT_ANGLE_MAX, "90"),
-        (P.PIVOT_ANGLE_MIN, "0"),
-        (P.PIVOT_SPEED_REFERENCE, "30"),
+        (P.PIVOT_ANGLE_MAX, "78"),
+        (P.PIVOT_ANGLE_MIN, "38"),
+        (P.PIVOT_SPEED_REFERENCE, "175"),
 
-        (P.FOLD_ANGLE_MAX, "90"),
-        (P.FOLD_ANGLE_MIN, "0"),
-        (P.FOLD_SPEED_REFERENCE, "30"),
+        (P.FOLD_ANGLE_MAX, "160"),
+        (P.FOLD_ANGLE_MIN, "-17"),
+        (P.FOLD_SPEED_REFERENCE, "175"),
 
-        (P.TILT_ANGLE_MAX, "90"),
-        (P.TILT_ANGLE_MIN, "0"),
-        (P.TILT_SPEED_REFERENCE, "30"),
+        (P.TILT_ANGLE_MAX, "120"),
+        (P.TILT_ANGLE_MIN, "-120"),
+        (P.TILT_SPEED_REFERENCE, "175"),
 
-        (P.ROTATE_ANGLE_MAX, "180"),
-        (P.ROTATE_ANGLE_MIN, "90"),
-        (P.ROTATE_SPEED_REFERENCE, "30"),
+        (P.ROTATE_ANGLE_MAX, "-60"),
+        (P.ROTATE_ANGLE_MIN, "-138"),
+        (P.ROTATE_SPEED_REFERENCE, "175"),
 
-        (P.GATE_ANGLE_MAX, "90"),
-        (P.GATE_ANGLE_MIN, "0"),
-        (P.GATE_SPEED_REFERENCE, "30"),
+        (P.GATE_ANGLE_MAX, "0"), # TODO: update
+        (P.GATE_ANGLE_MIN, "0"), # TODO: update
+        (P.GATE_SPEED_REFERENCE, "175"),
 
-        (P.PTO_FLOW_RATE, "1"),
+        (P.PTO_FLOW_RATE, "175"),
     ]
 
     def __init__(self):
