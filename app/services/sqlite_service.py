@@ -8,23 +8,23 @@ class SQLiteService:
     DEFAULTS = [
         (P.PIVOT_ANGLE_MAX, "78"),
         (P.PIVOT_ANGLE_MIN, "38"),
-        (P.PIVOT_SPEED_REFERENCE, "3"),
+        (P.PIVOT_SPEED_REFERENCE, "175"),
 
         (P.FOLD_ANGLE_MAX, "160"),
         (P.FOLD_ANGLE_MIN, "-17"),
-        (P.FOLD_SPEED_REFERENCE, "3"),
+        (P.FOLD_SPEED_REFERENCE, "175"),
 
         (P.TILT_ANGLE_MAX, "-60"),
         (P.TILT_ANGLE_MIN, "-138"),
-        (P.TILT_SPEED_REFERENCE, "3"),
+        (P.TILT_SPEED_REFERENCE, "175"),
 
         (P.ROTATE_ANGLE_MAX, "120"),
         (P.ROTATE_ANGLE_MIN, "-120"),
-        (P.ROTATE_SPEED_REFERENCE, "3"),
+        (P.ROTATE_SPEED_REFERENCE, "175"),
 
         (P.GATE_ANGLE_MAX, "0"), # TODO: update
         (P.GATE_ANGLE_MIN, "0"), # TODO: update
-        (P.GATE_SPEED_REFERENCE, "3"),
+        (P.GATE_SPEED_REFERENCE, "175"),
 
         (P.PTO_FLOW_RATE, "1"), # TODO: update
     ]
