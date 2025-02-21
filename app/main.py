@@ -4,6 +4,8 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
+from services.redis_service import RedisService
+from services.sqlite_service import SQLiteService
 from routers.data_router import router as data_router
 
 app = FastAPI()
@@ -16,6 +18,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# TODO: replace with lifespan event handler
+@app.on_event("startup")
+async def startup_event():
+    datastore = RedisService()
+    database = SQLiteService()
+    database.initialize()
+    datastore.load_data(database)
+    database.close()
+    datastore.close()
 
 
 @app.get("/")

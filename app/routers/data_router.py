@@ -17,23 +17,18 @@ class DataRouter:
 
     def __init__(self):
         self.datastore = RedisService()
-        database = SQLiteService()
-        database.initialize_database()
-        self.datastore.load_data(database)
-        database.close()
 
     # TEST
 
     @router.get("/test", tags=["test"])
     async def test(self):
         # Test Redis
-        print(P.TEST.name)
-
         self.datastore.set(P.TEST.name, 0)
         redis_start = time.time_ns()
         self.datastore.set(P.TEST.name, 1)
         redis_result = int(self.datastore.get(P.TEST.name)) == 1
         redis_end = time.time_ns()
+
         # Test SQLite
         database = SQLiteService()
         database.execute("DELETE FROM redis_keys WHERE key = 'test'")
@@ -43,6 +38,7 @@ class DataRouter:
         sqlite_result = int(cursor.fetchone()[0]) == 1
         sqlite_end = time.time_ns()
         database.close()
+
         # Return test results
         return {
             "redis": {
