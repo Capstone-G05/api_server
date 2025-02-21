@@ -14,12 +14,12 @@ class SQLiteService:
         (P.FOLD_ANGLE_MIN, "-17"),
         (P.FOLD_SPEED_REFERENCE, "175"),
 
-        (P.TILT_ANGLE_MAX, "-60"),
-        (P.TILT_ANGLE_MIN, "-138"),
+        (P.TILT_ANGLE_MAX, "-30"),
+        (P.TILT_ANGLE_MIN, "-69"),
         (P.TILT_SPEED_REFERENCE, "175"),
 
-        (P.ROTATE_ANGLE_MAX, "120"),
-        (P.ROTATE_ANGLE_MIN, "-120"),
+        (P.ROTATE_ANGLE_MAX, "60"),
+        (P.ROTATE_ANGLE_MIN, "-60"),
         (P.ROTATE_SPEED_REFERENCE, "175"),
 
         (P.GATE_ANGLE_MAX, "0"), # TODO: update
