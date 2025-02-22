@@ -26,7 +26,7 @@ class SQLiteService:
         (P.GATE_ANGLE_MIN, "0"), # TODO: update
         (P.GATE_SPEED_REFERENCE, "175"),
 
-        (P.PTO_FLOW_RATE, "1"), # TODO: update
+        (P.PTO_FLOW_RATE, "1000"),
     ]
 
     def __init__(self):
