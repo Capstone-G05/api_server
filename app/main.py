@@ -1,4 +1,5 @@
 import os
+import time
 
 import uvicorn
 from fastapi import FastAPI, WebSocket
@@ -32,8 +33,41 @@ async def startup_event():
 
 
 @app.get("/")
-async def read_root():
-    return {"message": "Welcome GO5!"}
+async def root():
+    """
+    Preform test of _Redis_ `datastore` and _SQLite_ `database`
+    """
+    datastore = RedisService()
+    database = SQLiteService()
+
+    # Test Redis
+    datastore.set("TEST", 0)
+    redis_start = time.time_ns()
+    datastore.set("TEST", 1)
+    redis_result = int(datastore.get("TEST")) == 1
+    redis_end = time.time_ns()
+
+    # Test SQLite
+    database.execute("DELETE FROM redis_keys WHERE key = 'TEST'")
+    sqlite_start = time.time_ns()
+    database.execute("INSERT INTO redis_keys (key, value) VALUES ('TEST', 1)")
+    cursor = database.execute("SELECT value FROM redis_keys WHERE key = 'TEST'")
+    sqlite_result = int(cursor.fetchone()[0]) == 1
+    sqlite_end = time.time_ns()
+
+    datastore.close()
+    database.close()
+
+    return {
+        "redis": {
+            "status": "ONLINE" if redis_result else "OFFLINE",
+            "delay": f"{(redis_end - redis_start) / 1000000} ms",
+        },
+        "sqlite": {
+            "status": "ONLINE" if sqlite_result else "OFFLINE",
+            "delay": f"{(sqlite_end - sqlite_start) / 1000000} ms",
+        }
+    }
 
 
 # WebSocket endpoint

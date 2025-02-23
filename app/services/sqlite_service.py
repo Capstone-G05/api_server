@@ -22,10 +22,11 @@ class SQLiteService:
         (P.ROTATE_ANGLE_MIN, "-60"),
         (P.ROTATE_SPEED_REFERENCE, "175"),
 
-        (P.GATE_ANGLE_MAX, "0"), # TODO: update
-        (P.GATE_ANGLE_MIN, "0"), # TODO: update
+        (P.GATE_ANGLE_MAX, "157"),
+        (P.GATE_ANGLE_MIN, "5"),
         (P.GATE_SPEED_REFERENCE, "175"),
 
+        (P.CROP_FILL_RATE, "500"),
         (P.PTO_FLOW_RATE, "1000"),
     ]
 
@@ -43,6 +44,7 @@ class SQLiteService:
             VALUES (?, ?)
             ON CONFLICT(key) DO UPDATE SET value = ?;
         """, (key, value, value))
+        self.connection.commit()
 
     def close(self):
         self.connection.close()
