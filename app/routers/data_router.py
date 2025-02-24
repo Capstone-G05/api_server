@@ -348,56 +348,86 @@ class DataRouter:
 
     @router.post("/crop-fill-rate", tags=["user_input"])
     async def set_crop_fill_rate(self, value):
-        self.datastore.set(P.CROP_FILL_RATE.name, value)
-        database = SQLiteService()
-        database.persist(P.CROP_FILL_RATE.name, value)
-        database.close()
-        return value
+        try:
+            self.datastore.set(P.CROP_FILL_RATE.name, float(value))
+            database = SQLiteService()
+            database.persist(P.CROP_FILL_RATE.name, float(value))
+            database.close()
+            return value
+        except ValueError:
+            return None
 
     @router.get("/crop-fill-rate", tags=["user_input"])
     async def get_crop_fill_rate(self):
-        val = self.datastore.get(P.CROP_FILL_RATE.name)
-        return float(val) if val is not None else None
+        try:
+            val = self.datastore.get(P.CROP_FILL_RATE.name)
+            return float(val) if val is not None else None
+        except ValueError:
+            return None
 
     @router.post("/pto-flow-rate", tags=["user_input"])
     async def set_pto_flow_rate(self, value):
-        self.datastore.set(P.PTO_FLOW_RATE.name, value)
-        database = SQLiteService()
-        database.persist(P.PTO_FLOW_RATE.name, value)
-        database.close()
-        return value
+        try:
+            self.datastore.set(P.PTO_FLOW_RATE.name, float(value))
+            database = SQLiteService()
+            database.persist(P.PTO_FLOW_RATE.name, float(value))
+            database.close()
+            return value
+        except ValueError:
+            return None
 
     @router.get("/pto-flow-rate", tags=["user_input"])
     async def get_pto_flow_rate(self):
-        val = self.datastore.get(P.PTO_FLOW_RATE.name)
-        return float(val) if val is not None else None
+        try:
+            val = self.datastore.get(P.PTO_FLOW_RATE.name)
+            return float(val) if val is not None else None
+        except ValueError:
+            return None
 
     @router.post("/weight-front", tags=["user_input"])
     async def set_weight_front(self, value):
-        self.datastore.set(P.WEIGHT_FRONT.name, value)
-        return value
+        try:
+            self.datastore.set(P.WEIGHT_FRONT.name, float(value))
+            return value
+        except ValueError:
+            return None
 
     @router.get("/weight-front", tags=["user_input"])
     async def get_weight_front(self):
-        val = self.datastore.get(P.WEIGHT_FRONT.name)
-        return float(val) if val is not None else None
+        try:
+            val = self.datastore.get(P.WEIGHT_FRONT.name)
+            return float(val) if val is not None else None
+        except ValueError:
+            return None
 
     @router.post("/weight-rear", tags=["user_input"])
     async def set_weight_rear(self, value):
-        self.datastore.set(P.WEIGHT_REAR.name, value)
-        return value
+        try:
+            self.datastore.set(P.WEIGHT_REAR.name, float(value))
+            return value
+        except ValueError:
+            return None
 
     @router.get("/weight-rear", tags=["user_input"])
     async def get_weight_rear(self):
-        val = self.datastore.get(P.WEIGHT_REAR.name)
-        return float(val) if val is not None else None
+        try:
+            val = self.datastore.get(P.WEIGHT_REAR.name)
+            return float(val) if val is not None else None
+        except ValueError:
+            return None
 
     @router.post("/pto-speed", tags=["user_input"])
     async def set_pto_speed(self, value):
-        self.datastore.set(P.PTO_SPEED.name, value)
-        return value
+        try:
+            self.datastore.set(P.PTO_SPEED.name, float(value))
+            return value
+        except ValueError:
+            return None
 
     @router.get("/pto-speed", tags=["user_input"])
     async def get_pto_speed(self):
-        val = self.datastore.get(P.PTO_SPEED.name)
-        return float(val) if val is not None else None
+        try:
+            val = self.datastore.get(P.PTO_SPEED.name)
+            return float(val) if val is not None else None
+        except ValueError:
+            return None
