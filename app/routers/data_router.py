@@ -33,7 +33,7 @@ class DataRouter:
             self.datastore.set(parameter.name, value)
             if persist:
                 database = SQLiteService()
-                database.persist(P.parameter.name, value)
+                database.persist(parameter.name, value)
                 database.close()
             return {parameter.name: value}
         except ValueError as e:
