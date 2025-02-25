@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
 
 from utils.parameters import Parameter as P
+from utils.models import StringTypeRequest, FloatTypeRequest
 from services.redis_service import RedisService
 from services.sqlite_service import SQLiteService
 
@@ -19,415 +20,290 @@ class DataRouter:
         self.datastore = RedisService()
         # Note: SQLiteService cannot be shared between threads
 
+    def safe_get(self, parameter: P, datatype: type) -> {}:
+        try:
+            val = self.datastore.get(parameter.name)
+            return {parameter.name: datatype(val) if val is not None else None}
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=f"{parameter.name} ValueError: {e}")
+
+    def safe_set(self, parameter: P, value, datatype: type, persist: bool = False) -> {}:
+        try:
+            value = datatype(value)
+            self.datastore.set(parameter.name, value)
+            if persist:
+                database = SQLiteService()
+                database.persist(P.PTO_FLOW_RATE.name, value)
+                database.close()
+            return {parameter.name: value}
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=f"{parameter.name} ValueError: {e}")
+
     # PIVOT
 
     @router.get("/pivot-angle", tags=["pivot"])
-    async def get_pivot_angle(self):
-        val = self.datastore.get(P.PIVOT_ANGLE.name)
-        return float(val) if val is not None else None
+    async def get_pivot_angle(self) -> {}:
+        return self.safe_get(P.PIVOT_ANGLE, float)
 
     @router.post("/pivot-angle", tags=["pivot"])
-    async def set_pivot_angle(self, value):
-        self.datastore.set(P.PIVOT_ANGLE.name, value)
-        return value
+    async def set_pivot_angle(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PIVOT_ANGLE, request.value, request.datatype, persist=False)
 
     @router.get("/pivot-angle-max", tags=["pivot"])
-    async def get_pivot_angle_max(self):
-        val = self.datastore.get(P.PIVOT_ANGLE_MAX.name)
-        return float(val) if val is not None else None
+    async def get_pivot_angle_max(self) -> {}:
+        return self.safe_get(P.PIVOT_ANGLE_MAX, float)
 
     @router.post("/pivot-angle-max", tags=["pivot"])
-    async def set_pivot_angle_max(self, value):
-        self.datastore.set(P.PIVOT_ANGLE_MAX.name, value)
-        database = SQLiteService()
-        database.persist(P.PIVOT_ANGLE_MAX.name, value)
-        database.close()
-        return value
+    async def set_pivot_angle_max(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PIVOT_ANGLE_MAX, request.value, request.datatype, persist=True)
 
     @router.get("/pivot-angle-min", tags=["pivot"])
-    async def get_pivot_angle_min(self):
-        val = self.datastore.get(P.PIVOT_ANGLE_MIN.name)
-        return float(val) if val is not None else None
+    async def get_pivot_angle_min(self) -> {}:
+        return self.safe_get(P.PIVOT_ANGLE_MIN, float)
 
     @router.post("/pivot-angle-min", tags=["pivot"])
-    async def set_pivot_angle_min(self, value):
-        self.datastore.set(P.PIVOT_ANGLE_MIN.name, value)
-        database = SQLiteService()
-        database.persist(P.PIVOT_ANGLE_MIN.name, value)
-        database.close()
-        return value
+    async def set_pivot_angle_min(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PIVOT_ANGLE_MIN, request.value, request.datatype, persist=True)
 
     @router.get("/pivot-speed-reference", tags=["pivot"])
-    async def get_pivot_speed_reference(self):
-        val = self.datastore.get(P.PIVOT_SPEED_REFERENCE.name)
-        return float(val) if val is not None else None
+    async def get_pivot_speed_reference(self) -> {}:
+        return self.safe_get(P.PIVOT_SPEED_REFERENCE, float)
 
     @router.post("/pivot-speed-reference", tags=["pivot"])
-    async def set_pivot_speed_reference(self, value):
-        self.datastore.set(P.PIVOT_SPEED_REFERENCE.name, value)
-        database = SQLiteService()
-        database.persist(P.PIVOT_SPEED_REFERENCE.name, value)
-        database.close()
-        return value
+    async def set_pivot_speed_reference(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PIVOT_SPEED_REFERENCE, request.value, request.datatype, persist=True)
 
     @router.get("/pivot-up-pwm", tags=["pivot"])
-    async def get_pivot_up_pwm(self):
-        val = self.datastore.get(P.PIVOT_UP_PWM.name)
-        return float(val) if val is not None else None
+    async def get_pivot_up_pwm(self) -> {}:
+        return self.safe_get(P.PIVOT_UP_PWM, float)
 
     @router.get("/pivot-down-pwm", tags=["pivot"])
-    async def get_pivot_down_pwm(self):
-        val = self.datastore.get(P.PIVOT_DOWN_PWM.name)
-        return float(val) if val is not None else None
+    async def get_pivot_down_pwm(self) -> {}:
+        return self.safe_get(P.PIVOT_DOWN_PWM, float)
 
     # FOLD
 
     @router.get("/fold-angle", tags=["fold"])
-    async def get_fold_angle(self):
-        val = self.datastore.get(P.FOLD_ANGLE.name)
-        return float(val) if val is not None else None
+    async def get_fold_angle(self) -> {}:
+        return self.safe_get(P.FOLD_ANGLE, float)
 
     @router.post("/fold-angle", tags=["fold"])
-    async def set_fold_angle(self, value):
-        self.datastore.set(P.FOLD_ANGLE.name, value)
-        return value
+    async def set_fold_angle(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.FOLD_ANGLE, request.value, request.datatype, persist=False)
 
     @router.get("/fold-angle-max", tags=["fold"])
-    async def get_fold_angle_max(self):
-        val = self.datastore.get(P.FOLD_ANGLE_MAX.name)
-        return float(val) if val is not None else None
+    async def get_fold_angle_max(self) -> {}:
+        return self.safe_get(P.FOLD_ANGLE_MAX, float)
 
     @router.post("/fold-angle-max", tags=["fold"])
-    async def set_fold_angle_max(self, value):
-        self.datastore.set(P.FOLD_ANGLE_MAX.name, value)
-        database = SQLiteService()
-        database.persist(P.FOLD_ANGLE_MAX.name, value)
-        database.close()
-        return value
+    async def set_fold_angle_max(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.FOLD_ANGLE_MAX, request.value, request.datatype, persist=True)
 
     @router.get("/fold-angle-min", tags=["fold"])
-    async def get_fold_angle_min(self):
-        val = self.datastore.get(P.FOLD_ANGLE_MIN.name)
-        return float(val) if val is not None else None
+    async def get_fold_angle_min(self) -> {}:
+        return self.safe_get(P.FOLD_ANGLE_MIN, float)
 
     @router.post("/fold-angle-min", tags=["fold"])
-    async def set_fold_angle_min(self, value):
-        self.datastore.set(P.FOLD_ANGLE_MIN.name, value)
-        database = SQLiteService()
-        database.persist(P.FOLD_ANGLE_MIN.name, value)
-        database.close()
-        return value
+    async def set_fold_angle_min(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.FOLD_ANGLE_MIN, request.value, request.datatype, persist=True)
 
     @router.get("/fold-speed-reference", tags=["fold"])
-    async def get_fold_speed_reference(self):
-        val = self.datastore.get(P.FOLD_SPEED_REFERENCE.name)
-        return float(val) if val is not None else None
+    async def get_fold_speed_reference(self) -> {}:
+        return self.safe_get(P.FOLD_SPEED_REFERENCE, float)
 
     @router.post("/fold-speed-reference", tags=["fold"])
-    async def set_fold_speed_reference(self, value):
-        self.datastore.set(P.FOLD_SPEED_REFERENCE.name, value)
-        database = SQLiteService()
-        database.persist(P.FOLD_SPEED_REFERENCE.name, value)
-        database.close()
-        return value
+    async def set_fold_speed_reference(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.FOLD_SPEED_REFERENCE, request.value, request.datatype, persist=True)
 
     @router.get("/fold-out-pwm", tags=["fold"])
-    async def get_fold_out_pwm(self):
-        val = self.datastore.get(P.FOLD_OUT_PWM.name)
-        return float(val) if val is not None else None
+    async def get_fold_out_pwm(self) -> {}:
+        return self.safe_get(P.FOLD_OUT_PWM, float)
 
     @router.get("/fold-in-pwm", tags=["fold"])
-    async def get_fold_in_pwm(self):
-        val = self.datastore.get(P.FOLD_IN_PWM.name)
-        return float(val) if val is not None else None
+    async def get_fold_in_pwm(self) -> {}:
+        return self.safe_get(P.FOLD_IN_PWM, float)
 
     # TILT
 
     @router.get("/tilt-angle", tags=["tilt"])
-    async def get_tilt_angle(self):
-        val = self.datastore.get(P.TILT_ANGLE.name)
-        return float(val) if val is not None else None
+    async def get_tilt_angle(self) -> {}:
+        return self.safe_get(P.TILT_ANGLE, float)
 
     @router.post("/tilt-angle", tags=["tilt"])
-    async def set_tilt_angle(self, value):
-        self.datastore.set(P.TILT_ANGLE.name, value)
-        return value
+    async def set_tilt_angle(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.TILT_ANGLE, request.value, request.datatype, persist=False)
 
     @router.get("/tilt-angle-max", tags=["tilt"])
-    async def get_tilt_angle_max(self):
-        val = self.datastore.get(P.TILT_ANGLE_MAX.name)
-        return float(val) if val is not None else None
+    async def get_tilt_angle_max(self) -> {}:
+        return self.safe_get(P.TILT_ANGLE_MAX, float)
 
     @router.post("/tilt-angle-max", tags=["tilt"])
-    async def set_tilt_angle_max(self, value):
-        self.datastore.set(P.TILT_ANGLE_MAX.name, value)
-        database = SQLiteService()
-        database.persist(P.TILT_ANGLE_MAX.name, value)
-        database.close()
-        return value
+    async def set_tilt_angle_max(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.TILT_ANGLE_MAX, request.value, request.datatype, persist=True)
 
     @router.get("/tilt-angle-min", tags=["tilt"])
-    async def get_tilt_angle_min(self):
-        val = self.datastore.get(P.TILT_ANGLE_MIN.name)
-        return float(val) if val is not None else None
+    async def get_tilt_angle_min(self) -> {}:
+        return self.safe_get(P.TILT_ANGLE_MIN, float)
 
     @router.post("/tilt-angle-min", tags=["tilt"])
-    async def set_tilt_angle_min(self, value):
-        self.datastore.set(P.TILT_ANGLE_MIN.name, value)
-        database = SQLiteService()
-        database.persist(P.TILT_ANGLE_MIN.name, value)
-        database.close()
-        return value
+    async def set_tilt_angle_min(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.TILT_ANGLE_MIN, request.value, request.datatype, persist=True)
 
     @router.get("/tilt-speed-reference", tags=["tilt"])
-    async def get_tilt_speed_reference(self):
-        val = self.datastore.get(P.TILT_SPEED_REFERENCE.name)
-        return float(val) if val is not None else None
+    async def get_tilt_speed_reference(self) -> {}:
+        return self.safe_get(P.TILT_SPEED_REFERENCE, float)
 
     @router.post("/tilt-speed-reference", tags=["tilt"])
-    async def set_tilt_speed_reference(self, value):
-        self.datastore.set(P.TILT_SPEED_REFERENCE.name, value)
-        database = SQLiteService()
-        database.persist(P.TILT_SPEED_REFERENCE.name, value)
-        database.close()
-        return value
+    async def set_tilt_speed_reference(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.TILT_SPEED_REFERENCE, request.value, request.datatype, persist=True)
 
     @router.get("/tilt-up-pwm", tags=["tilt"])
-    async def get_tilt_up_pwm(self):
-        val = self.datastore.get(P.TILT_UP_PWM.name)
-        return float(val) if val is not None else None
+    async def get_tilt_up_pwm(self) -> {}:
+        return self.safe_get(P.TILT_UP_PWM, float)
 
     @router.get("/tilt-down-pwm", tags=["tilt"])
-    async def get_tilt_down_pwm(self):
-        val = self.datastore.get(P.TILT_DOWN_PWM.name)
-        return float(val) if val is not None else None
+    async def get_tilt_down_pwm(self) -> {}:
+        return self.safe_get(P.TILT_DOWN_PWM, float)
 
     # ROTATE
 
     @router.get("/rotate-angle", tags=["rotate"])
-    async def get_rotate_angle(self):
-        val = self.datastore.get(P.ROTATE_ANGLE.name)
-        return float(val) if val is not None else None
+    async def get_rotate_angle(self) -> {}:
+        return self.safe_get(P.ROTATE_ANGLE, float)
 
     @router.post("/rotate-angle", tags=["rotate"])
-    async def set_rotate_angle(self, value):
-        self.datastore.set(P.ROTATE_ANGLE.name, value)
-        return value
+    async def set_rotate_angle(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.ROTATE_ANGLE, request.value, request.datatype, persist=False)
 
     @router.get("/rotate-angle-max", tags=["rotate"])
-    async def get_rotate_angle_max(self):
-        val = self.datastore.get(P.ROTATE_ANGLE_MAX.name)
-        return float(val) if val is not None else None
+    async def get_rotate_angle_max(self) -> {}:
+        return self.safe_get(P.ROTATE_ANGLE_MAX, float)
 
     @router.post("/rotate-angle-max", tags=["rotate"])
-    async def set_rotate_angle_max(self, value):
-        self.datastore.set(P.ROTATE_ANGLE_MAX.name, value)
-        database = SQLiteService()
-        database.persist(P.ROTATE_ANGLE_MAX.name, value)
-        database.close()
-        return value
+    async def set_rotate_angle_max(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.ROTATE_ANGLE_MAX, request.value, request.datatype, persist=True)
 
     @router.get("/rotate-angle-min", tags=["rotate"])
-    async def get_rotate_angle_min(self):
-        val = self.datastore.get(P.ROTATE_ANGLE_MIN.name)
-        return float(val) if val is not None else None
+    async def get_rotate_angle_min(self) -> {}:
+        return self.safe_get(P.ROTATE_ANGLE_MIN, float)
 
     @router.post("/rotate-angle-min", tags=["rotate"])
-    async def set_rotate_angle_min(self, value):
-        self.datastore.set(P.ROTATE_ANGLE_MIN.name, value)
-        database = SQLiteService()
-        database.persist(P.ROTATE_ANGLE_MIN.name, value)
-        database.close()
-        return value
+    async def set_rotate_angle_min(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.ROTATE_ANGLE_MIN, request.value, request.datatype, persist=True)
 
     @router.get("/rotate-speed-reference", tags=["rotate"])
-    async def get_rotate_speed_reference(self):
-        val = self.datastore.get(P.ROTATE_SPEED_REFERENCE.name)
-        return float(val) if val is not None else None
+    async def get_rotate_speed_reference(self) -> {}:
+        return self.safe_get(P.ROTATE_SPEED_REFERENCE, float)
 
     @router.post("/rotate-speed-reference", tags=["rotate"])
-    async def set_rotate_speed_reference(self, value):
-        self.datastore.set(P.ROTATE_SPEED_REFERENCE.name, value)
-        database = SQLiteService()
-        database.persist(P.ROTATE_SPEED_REFERENCE.name, value)
-        database.close()
-        return value
+    async def set_rotate_speed_reference(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.ROTATE_SPEED_REFERENCE, request.value, request.datatype, persist=True)
 
     @router.get("/rotate-cw-pwm", tags=["rotate"])
-    async def get_rotate_cw_pwm(self):
-        val = self.datastore.get(P.ROTATE_CW_PWM.name)
-        return float(val) if val is not None else None
+    async def get_rotate_cw_pwm(self) -> {}:
+        return self.safe_get(P.ROTATE_CW_PWM, float)
 
     @router.get("/rotate-ccw-pwm", tags=["rotate"])
-    async def get_rotate_ccw_pwm(self):
-        val = self.datastore.get(P.ROTATE_CCW_PWM.name)
-        return float(val) if val is not None else None
+    async def get_rotate_ccw_pwm(self) -> {}:
+        return self.safe_get(P.ROTATE_CCW_PWM, float)
 
     # GATE
 
     @router.get("/gate-angle", tags=["gate"])
-    async def get_gate_angle(self):
-        val = self.datastore.get(P.GATE_ANGLE.name)
-        return float(val) if val is not None else None
+    async def get_gate_angle(self) -> {}:
+        return self.safe_get(P.GATE_ANGLE, float)
 
     @router.post("/gate-angle", tags=["gate"])
-    async def set_gate_angle(self, value):
-        self.datastore.set(P.GATE_ANGLE.name, value)
-        return value
+    async def set_gate_angle(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.GATE_ANGLE, request.value, request.datatype, persist=False)
 
     @router.get("/gate-angle-max", tags=["gate"])
-    async def get_gate_angle_max(self):
-        val = self.datastore.get(P.GATE_ANGLE_MAX.name)
-        return float(val) if val is not None else None
+    async def get_gate_angle_max(self) -> {}:
+        return self.safe_get(P.GATE_ANGLE_MAX, float)
 
     @router.post("/gate-angle-max", tags=["gate"])
-    async def set_gate_angle_max(self, value):
-        self.datastore.set(P.GATE_ANGLE_MAX.name, value)
-        database = SQLiteService()
-        database.persist(P.GATE_ANGLE_MAX.name, value)
-        database.close()
-        return value
+    async def set_gate_angle_max(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.GATE_ANGLE_MAX, request.value, request.datatype, persist=True)
 
     @router.get("/gate-angle-min", tags=["gate"])
-    async def get_gate_angle_min(self):
-        val = self.datastore.get(P.GATE_ANGLE_MIN.name)
-        return float(val) if val is not None else None
+    async def get_gate_angle_min(self) -> {}:
+        return self.safe_get(P.GATE_ANGLE_MIN, float)
 
     @router.post("/gate-angle-min", tags=["gate"])
-    async def set_gate_angle_min(self, value):
-        self.datastore.set(P.GATE_ANGLE_MIN.name, value)
-        database = SQLiteService()
-        database.persist(P.GATE_ANGLE_MIN.name, value)
-        database.close()
-        return value
+    async def set_gate_angle_min(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.GATE_ANGLE_MIN, request.value, request.datatype, persist=True)
 
     @router.get("/gate-speed-reference", tags=["gate"])
-    async def get_gate_speed_reference(self):
-        val = self.datastore.get(P.GATE_SPEED_REFERENCE.name)
-        return float(val) if val is not None else None
+    async def get_gate_speed_reference(self) -> {}:
+        return self.safe_get(P.GATE_SPEED_REFERENCE, float)
 
     @router.post("/gate-speed-reference", tags=["gate"])
-    async def set_gate_speed_reference(self, value):
-        self.datastore.set(P.GATE_SPEED_REFERENCE.name, value)
-        database = SQLiteService()
-        database.persist(P.GATE_SPEED_REFERENCE.name, value)
-        database.close()
-        return value
+    async def set_gate_speed_reference(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.GATE_SPEED_REFERENCE, request.value, request.datatype, persist=True)
 
     @router.get("/gate-open-pwm", tags=["gate"])
-    async def get_gate_open_pwm(self):
-        val = self.datastore.get(P.GATE_OPEN_PWM.name)
-        return float(val) if val is not None else None
+    async def get_gate_open_pwm(self) -> {}:
+        return self.safe_get(P.GATE_OPEN_PWM, float)
 
     @router.get("/gate-close-pwm", tags=["gate"])
-    async def get_gate_close_pwm(self):
-        val = self.datastore.get(P.GATE_CLOSE_PWM.name)
-        return float(val) if val is not None else None
+    async def get_gate_close_pwm(self) -> {}:
+        return self.safe_get(P.GATE_CLOSE_PWM, float)
 
     # ONLINE (STATUS)
 
     @router.get("/online", tags=["status"])
-    async def get_online(self):
+    async def get_online(self) -> {}:
         """
         0/65535 = Offline | 1 = Online | 2 = I2C Error | 3 = CAN Error | 4 = OS Error
         """
-        val = self.datastore.get(P.ONLINE.name)
-        return int(val) if val is not None else None
+        return self.safe_get(P.ONLINE, int)
 
     # USER INPUT
 
     @router.post("/machine-type", tags=["user_input"])
-    async def set_machine_type(self, value):
-        self.datastore.set(P.MACHINE_TYPE.name, value)
-        return value
+    async def set_machine_type(self, request: StringTypeRequest) -> {}:
+        return self.safe_set(P.MACHINE_TYPE, request.value, request.datatype, persist=False)
 
     @router.get("/machine-type", tags=["user_input"])
-    async def get_machine_type(self):
-        val = self.datastore.get(P.MACHINE_TYPE.name)
-        return str(val) if val is not None else None
+    async def get_machine_type(self) -> {}:
+        return self.safe_get(P.MACHINE_TYPE, str)
 
     @router.post("/crop-fill-rate", tags=["user_input"])
-    async def set_crop_fill_rate(self, value):
-        try:
-            self.datastore.set(P.CROP_FILL_RATE.name, float(value))
-            database = SQLiteService()
-            database.persist(P.CROP_FILL_RATE.name, float(value))
-            database.close()
-            return value
-        except ValueError:
-            return None
+    async def set_crop_fill_rate(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.CROP_FILL_RATE, request.value, request.datatype, persist=True)
 
     @router.get("/crop-fill-rate", tags=["user_input"])
-    async def get_crop_fill_rate(self):
-        try:
-            val = self.datastore.get(P.CROP_FILL_RATE.name)
-            return float(val) if val is not None else None
-        except ValueError:
-            return None
+    async def get_crop_fill_rate(self) -> {}:
+        return self.safe_get(P.CROP_FILL_RATE, float)
 
     @router.post("/pto-flow-rate", tags=["user_input"])
-    async def set_pto_flow_rate(self, value):
-        try:
-            self.datastore.set(P.PTO_FLOW_RATE.name, float(value))
-            database = SQLiteService()
-            database.persist(P.PTO_FLOW_RATE.name, float(value))
-            database.close()
-            return value
-        except ValueError:
-            return None
+    async def set_pto_flow_rate(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PTO_FLOW_RATE, request.value, request.datatype, persist=True)
 
     @router.get("/pto-flow-rate", tags=["user_input"])
-    async def get_pto_flow_rate(self):
-        try:
-            val = self.datastore.get(P.PTO_FLOW_RATE.name)
-            return float(val) if val is not None else None
-        except ValueError:
-            return None
+    async def get_pto_flow_rate(self) -> {}:
+        return self.safe_get(P.PTO_FLOW_RATE, float)
 
     @router.post("/weight-front", tags=["user_input"])
-    async def set_weight_front(self, value):
-        try:
-            self.datastore.set(P.WEIGHT_FRONT.name, float(value))
-            return value
-        except ValueError:
-            return None
+    async def set_weight_front(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.WEIGHT_FRONT, request.value, request.datatype, persist=False)
 
     @router.get("/weight-front", tags=["user_input"])
-    async def get_weight_front(self):
-        try:
-            val = self.datastore.get(P.WEIGHT_FRONT.name)
-            return float(val) if val is not None else None
-        except ValueError:
-            return None
+    async def get_weight_front(self) -> {}:
+        return self.safe_get(P.WEIGHT_FRONT, float)
 
     @router.post("/weight-rear", tags=["user_input"])
-    async def set_weight_rear(self, value):
-        try:
-            self.datastore.set(P.WEIGHT_REAR.name, float(value))
-            return value
-        except ValueError:
-            return None
+    async def set_weight_rear(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.WEIGHT_REAR, request.value, request.datatype, persist=False)
 
     @router.get("/weight-rear", tags=["user_input"])
-    async def get_weight_rear(self):
-        try:
-            val = self.datastore.get(P.WEIGHT_REAR.name)
-            return float(val) if val is not None else None
-        except ValueError:
-            return None
+    async def get_weight_rear(self) -> {}:
+        return self.safe_get(P.WEIGHT_REAR, float)
 
     @router.post("/pto-speed", tags=["user_input"])
-    async def set_pto_speed(self, value):
-        try:
-            self.datastore.set(P.PTO_SPEED.name, float(value))
-            return value
-        except ValueError:
-            return None
+    async def set_pto_speed(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.PTO_SPEED, request.value, request.datatype, persist=False)
 
     @router.get("/pto-speed", tags=["user_input"])
-    async def get_pto_speed(self):
-        try:
-            val = self.datastore.get(P.PTO_SPEED.name)
-            return float(val) if val is not None else None
-        except ValueError:
-            return None
+    async def get_pto_speed(self) -> {}:
+        return self.safe_get(P.PTO_SPEED, float)
