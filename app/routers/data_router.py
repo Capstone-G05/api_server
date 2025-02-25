@@ -307,3 +307,7 @@ class DataRouter:
     @router.get("/pto-speed", tags=["user_input"])
     async def get_pto_speed(self) -> {}:
         return self.safe_get(P.PTO_SPEED, float)
+
+    @router.post("/frame-rate", tags=["user_input"])
+    async def set_frame_rate(self, request: FloatTypeRequest) -> {}:
+        return self.safe_set(P.FRAME_RATE, request.value, request.datatype, persist=False)

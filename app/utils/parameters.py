@@ -8,6 +8,7 @@ class Parameter(enum.StrEnum):
     WEIGHT_FRONT = "WEIGHT_FRONT"                          # kg
     WEIGHT_REAR = "WEIGHT_REAR"                            # kg
     PTO_SPEED = "PTO_SPEED"                                # RPM
+    FRAME_RATE = "FRAME_RATE"                              # FPS
     CROP_FILL_RATE = "CROP_FILL_RATE"                      # kg / click                  PERSISTED
     PTO_FLOW_RATE = "PTO_FLOW_RATE"                        # kg / rotation               PERSISTED
 
