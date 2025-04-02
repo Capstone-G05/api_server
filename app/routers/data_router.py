@@ -292,6 +292,10 @@ class DataRouter:
     async def get_weight_front(self) -> {}:
         return self.safe_get(P.WEIGHT_FRONT, float)
 
+    @router.get("/weight-total", tags=["user_input"])
+    async def get_weight_total(self) -> {}:
+        return {"WEIGHT_TOTAL": self.safe_get(P.WEIGHT_REAR, float)["WEIGHT_REAR"] + self.safe_get(P.WEIGHT_FRONT, float)["WEIGHT_FRONT"]}
+
     @router.post("/weight-rear", tags=["user_input"])
     async def set_weight_rear(self, request: FloatTypeRequest) -> {}:
         return self.safe_set(P.WEIGHT_REAR, request.value, request.datatype, persist=False)
